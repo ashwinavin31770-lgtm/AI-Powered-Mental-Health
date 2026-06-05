@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serenity AI | Mental Health Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+        <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+</head>
+<body>
+    <div class="page-noise"></div>
+    <header class="hero">
+        <nav class="topbar">
+            <div class="brand">
+                <span class="brand-mark">S</span>
+                <div>
+                    <p class="brand-kicker">AI Wellness Studio</p>
+                    <h1>Serenity AI</h1>
+                </div>
+            </div>
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                Private demo mode
+            </div>
+        </nav>
+
+        <section class="hero-grid">
+            <div class="hero-copy glass-card">
+                <p class="eyebrow">Empathetic mental health companion</p>
+                <h2>Conversation, mood tracking, coping support, and crisis-aware guidance in one safe space.</h2>
+                <p class="hero-text">
+                    This project demo simulates an AI companion that listens without judgment, detects emotional patterns,
+                    recommends evidence-informed coping techniques, and encourages healthy routines while clearly acknowledging
+                    that it is not a substitute for licensed care.
+                </p>
+                <div class="hero-actions">
+                    <button class="primary-btn" data-scroll-target="chat-section">Start a check-in</button>
+                    <button class="secondary-btn" data-scroll-target="dashboard-section">View mood dashboard</button>
+                </div>
+                <div class="hero-metrics">
+                    <article>
+                        <strong id="totalCheckIns">0</strong>
+                        <span>Check-ins logged</span>
+                    </article>
+                    <article>
+                        <strong id="streakCount">0</strong>
+                        <span>Day streak</span>
+                    </article>
+                    <article>
+                        <strong id="dominantEmotion">Calm</strong>
+                        <span>Most common emotion</span>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="hero-side glass-card">
+                <p class="panel-label">Today at a glance</p>
+                <div class="mini-summary">
+                    <div>
+                        <span>Current vibe</span>
+                        <strong id="todayEmotion">Balanced</strong>
+                    </div>
+                    <div>
+                        <span>Risk status</span>
+                        <strong id="riskStatus">Low</strong>
+                    </div>
+                </div>
+                <div class="breathing-orb">
+                    <div class="orb-core"></div>
+                    <p>Breathe in for 4, hold for 4, exhale for 6.</p>
+                </div>
+                <ul class="safety-points">
+                    <li>Encrypted local demo storage</li>
+                    <li>Non-diagnostic language</li>
+                    <li>Crisis-aware response flow</li>
+                </ul>
+            </aside>
+        </section>
+    </header>
+
+    <main class="app-grid">
+        <section class="content-column">
+            <section class="glass-card section-card" id="chat-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Companion chat</p>
+                        <h3>Talk to Serenity AI</h3>
+                    </div>
+                    <button class="ghost-btn" id="clearChatBtn">Clear chat</button>
+                </div>
+
+                <div class="chat-shell">
+                    <div class="chat-log" id="chatLog" aria-live="polite"></div>
+                    <div class="quick-replies" id="quickReplies"></div>
+                    <form class="chat-form" id="chatForm">
+                        <label class="sr-only" for="chatInput">Describe how you're feeling</label>
+                        <textarea id="chatInput" rows="3" placeholder="Share what is on your mind. Example: I feel overwhelmed and I can't switch off tonight."></textarea>
+                        <button type="submit" class="primary-btn">Send</button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="glass-card section-card" id="dashboard-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Mood analytics</p>
+                        <h3>Emotional trends and weekly overview</h3>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <article class="metric-card">
+                        <span>Average mood</span>
+                        <strong id="averageMood">0.0 / 10</strong>
+                        <p>Calculated from your recent check-ins and journal entries.</p>
+                    </article>
+                    <article class="metric-card">
+                        <span>Primary need</span>
+                        <strong id="primaryNeed">Reflection</strong>
+                        <p>Estimated from the emotions and stress language detected most often.</p>
+                    </article>
+                    <article class="metric-card">
+                        <span>Support trend</span>
+                        <strong id="supportTrend">Steady</strong>
+                        <p>Looks for improving, stable, or worsening patterns in the last seven days.</p>
+                    </article>
+                </div>
+
+                <div class="chart-section">
+                    <div class="chart-card">
+                        <div class="chart-title-row">
+                            <h4>Last 7 mood scores</h4>
+                            <span id="chartDateRange">No data yet</span>
+                        </div>
+                        <div class="bar-chart" id="moodChart"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-title-row">
+                            <h4>Emotion mix</h4>
+                            <span>Keyword-driven estimate</span>
+                        </div>
+                        <div class="emotion-list" id="emotionList"></div>
+                    </div>
+                </div>
+            </section>
+
+                <div class="chart-section">
+                    <div class="chart-card">
+                        <div class="chart-title-row">
+                            <h4>Signal sources</h4>
+                            <span>Text, journal, webcam, voice</span>
+                        </div>
+                        <div class="emotion-list" id="sourceList"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-title-row">
+                            <h4>Recent voice insight</h4>
+                            <span>Transcript plus tone hint</span>
+                        </div>
+                        <div class="voice-summary-card" id="voiceSummary">
+                            No voice check-in yet.
+                        </div>
+                    </div>
+                </div>
+            <section class="glass-card section-card" id="journal-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Guided journaling</p>
+                        <h3>Capture thoughts and receive reflection prompts</h3>
+                    </div>
+                </div>
+
+                <form class="journal-form" id="journalForm">
+                    <label for="journalPrompt">Prompt</label>
+                    <select id="journalPrompt">
+                        <option value="What has felt emotionally heavy for me today, and why?">What has felt emotionally heavy for me today, and why?</option>
+                        <option value="What helped me feel safe, supported, or grounded recently?">What helped me feel safe, supported, or grounded recently?</option>
+                        <option value="What thought am I repeating, and is it fully true?">What thought am I repeating, and is it fully true?</option>
+                        <option value="What would I say to a friend feeling the same way I do right now?">What would I say to a friend feeling the same way I do right now?</option>
+                    </select>
+
+                    <label for="journalMood">Mood score</label>
+                    <input id="journalMood" type="range" min="1" max="10" value="5">
+                    <p class="range-readout">Current score: <strong id="journalMoodValue">5</strong>/10</p>
+
+                    <label for="journalEntry">Journal entry</label>
+                    <textarea id="journalEntry" rows="6" placeholder="Write freely. Serenity AI will summarize themes and suggest a gentle next step."></textarea>
+
+                    <button type="submit" class="primary-btn">Save journal entry</button>
+                </form>
+
+                <div class="insight-panel" id="journalInsight">
+                    Save a journal entry to see an AI-style reflection summary here.
+                </div>
+
+                <div class="entry-list" id="journalList"></div>
+            </section>
+        </section>
+        
+            <section class="glass-card section-card" id="vision-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Optional webcam emotion check</p>
+                        <h3>Estimate facial expression with your camera</h3>
+                    </div>
+                </div>
+
+                <p class="hero-text">
+                    This is an experimental signal only. Facial expressions are not a reliable measure of mental state,
+                    so Serenity treats webcam analysis as a hint and not a diagnosis.
+                </p>
+
+                <div class="vision-grid">
+                    <div class="vision-preview-card">
+                        <video id="webcamVideo" class="webcam-video" autoplay muted playsinline></video>
+                        <canvas id="webcamCanvas" class="webcam-canvas"></canvas>
+                    </div>
+
+                    <div class="vision-panel">
+                        <div class="vision-actions">
+                            <button type="button" class="secondary-btn" id="startCameraBtn">Start camera</button>
+                            <button type="button" class="ghost-btn" id="stopCameraBtn">Stop camera</button>
+                            <button type="button" class="primary-btn" id="analyzeCameraBtn">Analyze emotion</button>
+                        </div>
+                        <div class="vision-status" id="visionStatus">
+                            Camera is off. Start the camera to run a visual mood check.
+                        </div>
+                        <div class="vision-result" id="visionResult">
+                            No webcam emotion result yet.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="glass-card section-card" id="voice-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Optional voice check-in</p>
+                        <h3>Speak and let the app transcribe your words</h3>
+                    </div>
+                </div>
+
+                <p class="hero-text">
+                    Voice check-ins use browser speech-to-text plus lightweight audio cues like volume and intensity.
+                    This is an assistive hint, not a diagnosis.
+                </p>
+
+                <div class="voice-grid">
+                    <div class="voice-panel">
+                        <div class="vision-actions">
+                            <button type="button" class="secondary-btn" id="startVoiceBtn">Start voice check</button>
+                            <button type="button" class="ghost-btn" id="stopVoiceBtn">Stop voice check</button>
+                            <button type="button" class="primary-btn" id="saveVoiceBtn">Save voice result</button>
+                        </div>
+                        <div class="vision-status" id="voiceStatus">
+                            Voice check is idle. Start recording to capture speech and audio energy.
+                        </div>
+                        <div class="vision-result" id="voiceHint">
+                            No voice emotion hint yet.
+                        </div>
+                    </div>
+
+                    <div class="voice-panel">
+                        <label for="voiceTranscript" class="panel-label">Transcript</label>
+                        <textarea id="voiceTranscript" rows="7" placeholder="Your spoken words will appear here. You can edit them before saving."></textarea>
+                        <p class="range-readout">Only save this if you consent to store the transcript in the database.</p>
+                    </div>
+                </div>
+            </section>
+        <aside class="sidebar-column">
+            <section class="glass-card section-card">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Personalized support</p>
+                        <h3>Recommended coping actions</h3>
+                    </div>
+                </div>
+                <div class="support-cards" id="copingCards"></div>
+            </section>
+
+            <section class="glass-card section-card">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Habits and reminders</p>
+                        <h3>Daily wellness routine</h3>
+                    </div>
+                </div>
+                <form class="habit-form" id="habitForm">
+                    <input id="habitInput" type="text" maxlength="60" placeholder="Add a habit goal, like Take a 10-minute walk">
+                    <button type="submit" class="secondary-btn">Add habit</button>
+                </form>
+                <div class="habit-list" id="habitList"></div>
+            </section>
+
+            <section class="glass-card section-card crisis-card" id="crisisSection">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Safety system</p>
+                        <h3>Crisis support and escalation</h3>
+                    </div>
+                </div>
+                <p class="crisis-copy">
+                    If a message suggests possible self-harm, suicide risk, or immediate danger, the app shifts from coaching to urgent support guidance.
+                </p>
+                <div class="crisis-status" id="crisisStatus">
+                    No active crisis language detected.
+                </div>
+                <ul class="resource-list">
+                    <li><strong>Emergency:</strong> Contact local emergency services immediately if someone is in immediate danger.</li>
+                    <li><strong>India:</strong> Tele-MANAS Helpline: 14416 or 1-800-891-4416</li>
+                    <li><strong>United States:</strong> Call or text 988 Suicide & Crisis Lifeline</li>
+                    <li><strong>Trusted support:</strong> Reach out to a family member, friend, therapist, or caregiver now.</li>
+                </ul>
+            </section>
+
+            <section class="glass-card section-card">
+                <div class="section-heading">
+                    <div>
+                        <p class="panel-label">Project notes</p>
+                        <h3>Architecture highlights</h3>
+                    </div>
+                </div>
+                <ul class="resource-list compact">
+                    <li>Frontend: vanilla HTML, CSS, and JavaScript for an easy-to-run MVP.</li>
+                    <li>Storage: browser localStorage for check-ins, moods, journal entries, and habits.</li>
+                    <li>AI simulation: rule-based empathy engine, emotion scoring, and coping recommendations.</li>
+                    <li>Safety: crisis phrase detection, non-diagnostic language, and urgent support redirection.</li>
+                </ul>
+            </section>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        <p>This demo supports reflection and habit building, but it does not replace a licensed mental health professional or emergency care.</p>
+    </footer>
+
+    <script src="frontend.js"></script>
+</body>
+</html>
